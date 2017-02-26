@@ -13,6 +13,7 @@
 # limitations under the License.
 
 # [START app]
+import logging
 from flask import Flask
 
 
@@ -22,6 +23,7 @@ app = Flask(__name__)
 @app.route('/')
 def hello():
     """Return a friendly HTTP greeting."""
+    logging.critical("Does this message work or what?")
     return 'IT WOIKS!'
 
 
