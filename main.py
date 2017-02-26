@@ -14,7 +14,7 @@
 
 # [START app]
 import logging
-from flask import Flask
+from flask import Flask, request
 
 
 app = Flask(__name__)
@@ -26,6 +26,14 @@ def hello():
     logging.critical("Does this message work or what?")
     return 'IT WOIKS!'
 
+groupme_data = []
+@app.route('/groupme', methods=['post', 'get'])
+def groupme():
+    if request.method == 'POST':
+        json = request.get_json()
+        logging.critical(request.get_json())
+        groupme_data.append(json)
+    return "<br><br>".join(str(d) for d in groupme_data)
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080)
