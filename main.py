@@ -19,7 +19,7 @@ from flask import Flask, request, current_app
 
 app = Flask(__name__)
 
-commands = ['/report']
+# commands = ['/report']
 
 @app.route('/')
 def hello():
