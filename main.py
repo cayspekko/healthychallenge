@@ -15,11 +15,12 @@
 # [START app]
 import logging
 from flask import Flask, request, current_app
+import requests
 
 
 app = Flask(__name__)
 
-# commands = ['/report']
+commands = ['/report', '/echo']
 
 @app.route('/')
 def hello():
@@ -27,14 +28,24 @@ def hello():
     logging.critical("Does this message work or what?")
     return 'IT WOIKS!'
 
-current_app.groupme_data = []
+
 @app.route('/groupme', methods=['post', 'get'])
 def groupme():
+    logging.critical("-->GROUPME")
+    with app.app_context():
+        if not hasattr(current_app, 'groupme_data'):
+            current_app.groupme_data = []
+        groupme_data = current_app.groupme_data
+
     if request.method == 'POST':
         json = request.get_json()
         logging.critical(request.get_json())
-        current_app.groupme_data.append(json)
-    return "<br><br>".join(str(d) for d in current_app.groupme_data)
+        groupme_data.append(json)
+        with app.app_context():
+            current_app.groupme_data = groupme_data
+
+    logging.critical('<--GROUPME')
+    return "<br><br>".join(str(d) for d in groupme_data)
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080)
