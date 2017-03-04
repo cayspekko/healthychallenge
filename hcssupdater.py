@@ -125,7 +125,7 @@ class HCSSUpdater(object):
         print('result', result)
 
 
-def main():
+def test_main():
     """Shows basic usage of the Sheets API.
 
     Creates a Sheets API service object and prints the names and majors of
@@ -140,4 +140,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    test_main()
