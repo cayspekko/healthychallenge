@@ -1,20 +1,6 @@
-# Copyright 2015 Google Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 # [START app]
 import logging
-from flask import Flask, request, current_app
+from flask import Flask, request, redirect
 import requests
 
 from hcssupdater import HCSSUpdater
@@ -23,6 +9,7 @@ app = Flask(__name__)
 
 BOT_ID = "33284e04361b09285e04b5beb1"
 BOT_URL = 'https://api.groupme.com/v3/bots/post'
+SHEET_ID = '1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs'
 
 
 def report_command(data):
@@ -31,9 +18,9 @@ def report_command(data):
     except IndexError:
         requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text':"Sorry %s! I don't know what went wrong!" % data['name']})
         return
-    updater = HCSSUpdater('1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs')
+    updater = HCSSUpdater(SHEET_ID)
     updater.update_score(data['name'], value, data['created_at'])
-    requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text':"Okay %s! I added that to the sheeeeet!" % data['name']})
+    requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text': "Okay %s! I added %s to the sheeeeet!" % (data['name'], value)})
 
 
 def echo_command(data):
@@ -52,28 +39,16 @@ def process_request(data):
 @app.route('/')
 def hello():
     """Return a friendly HTTP greeting."""
-    logging.critical("Does this message work or what?")
-    return 'IT WOIKS!'
+    return 'Hello everyone!'
 
 
 @app.route('/groupme', methods=['post', 'get'])
 def groupme():
-    logging.critical("-->GROUPME")
-    with app.app_context():
-        if not hasattr(current_app, 'groupme_data'):
-            current_app.groupme_data = []
-        groupme_data = current_app.groupme_data
-
     if request.method == 'POST':
         json = request.get_json()
-        logging.critical(json)
-        groupme_data.append(json)
-        with app.app_context():
-            current_app.groupme_data = groupme_data
         process_request({'text': json['text'], 'name': json['name'], 'created_at': json['created_at']})
-
-    logging.critical('<--GROUPME')
-    return "<br><br>".join(str(d) for d in groupme_data)
+    else:
+        return redirect('https://docs.google.com/spreadsheets/d/1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs', code=302)
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080)

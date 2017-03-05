@@ -1,16 +1,10 @@
-
-from __future__ import print_function
-
-from datetime import datetime
-
 import httplib2
 import time
 
 from apiclient import discovery
+from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 
-# If modifying these scopes, delete your previously saved credentials
-# at ~/.credentials/sheets.googleapis.com-python-quickstart.json
 SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Healthy Challenge Updater'
@@ -26,15 +20,7 @@ class HCSSUpdater(object):
         self.service = discovery.build('sheets', 'v4', http=http, discoveryServiceUrl=discovery_url)
 
     def get_credentials(self):
-        """Gets valid user credentials from storage.
-
-        If nothing has been stored, or if the stored credentials are invalid,
-        the OAuth2 flow is completed to obtain the new credentials.
-
-        Returns:
-            Credentials, the obtained credential.
-        """
-        scopes = ['https://www.googleapis.com/auth/spreadsheets']
+        scopes = [SCOPES]
 
         credentials = ServiceAccountCredentials.from_json_keyfile_name(
             CLIENT_SECRET_FILE, scopes=scopes)
@@ -54,8 +40,8 @@ class HCSSUpdater(object):
             spreadsheetId=self.spreadsheet_id, range=range_name).execute()
         values = result.get('values', [])
         end_date = datetime.strptime(values[-1][0], "%m/%d/%Y")
-        print('end_date', end_date, date, bool(date == end_date))
-        print('date values', values)
+        # print('end_date', end_date, date, bool(date == end_date))
+        # print('date values', values)
         if values:
             if date == end_date:
                 row_idx = len(values) + 1
@@ -64,7 +50,7 @@ class HCSSUpdater(object):
                 row_idx = len(values) + 2
                 row = [date.strftime('%m/%d/%y')]
             row.extend(['' for _ in range(cols - len(row))])
-            print('row is ', row_idx, row)
+            # print('row is ', row_idx, row)
             return row_idx, row
 
     def get_names(self):
@@ -75,40 +61,34 @@ class HCSSUpdater(object):
 
     def update_score(self, name, value, timestamp):
         date = self.timestamp_to_date(timestamp)
-        print('date', date)
+        # print('date', date)
 
         names = self.get_names()
-        print('names', names)
+        # print('names', names)
 
         end_col = len(names) + 1
         row_idx, row = self.row_from_date(date, end_col)
         name_idx = names.index(name) + 1
         row[name_idx] = value
-        print('updatedRow', row)
+        # print('updatedRow', row)
 
         range_name = '%s!A%s:%s%s' % (self.sheet_name, row_idx, end_col, row_idx)
-        print('rangeName', range_name)
+        # print('rangeName', range_name)
 
         body = {
             'values': [row]
         }
         result = self.service.spreadsheets().values().update(spreadsheetId=self.spreadsheet_id, range=range_name,
                                                              valueInputOption="USER_ENTERED", body=body).execute()
-        print('result', result)
+        # print('result', result)
 
 
 def test_main():
-    """Shows basic usage of the Sheets API.
-
-    Creates a Sheets API service object and prints the names and majors of
-    students in a sample spreadsheet:
-    https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-    """
     spreadsheetid = '1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs'
     ssupdator = HCSSUpdater(spreadsheetid)
-    ssupdator.update_score('Doug', str(2), str(int(time.time())))
-    ssupdator.update_score('Derek', str(2), str(int(time.time())))
-    ssupdator.update_score('Chad', str(3), str(int(time.time())))
+    ssupdator.update_score('Doug Applegate', str(3), str(int(time.time())))
+    ssupdator.update_score('Derek Haderlie', str(3), str(int(time.time())))
+    ssupdator.update_score('Chad Ruger', str(3), str(int(time.time())))
 
 
 if __name__ == '__main__':
