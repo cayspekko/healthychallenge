@@ -47,6 +47,7 @@ def groupme():
     if request.method == 'POST':
         json = request.get_json()
         process_request({'text': json['text'], 'name': json['name'], 'created_at': json['created_at']})
+        return ''
     else:
         return redirect('https://docs.google.com/spreadsheets/d/1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs', code=302)
 
