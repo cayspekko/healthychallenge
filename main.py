@@ -17,10 +17,37 @@ import logging
 from flask import Flask, request, current_app
 import requests
 
+from hcssupdater import HCSSUpdater
 
 app = Flask(__name__)
 
-commands = ['/report', '/echo']
+BOT_ID = "33284e04361b09285e04b5beb1"
+BOT_URL = 'https://api.groupme.com/v3/bots/post'
+
+
+def report_command(data):
+    try:
+        value = data['text'].split()[1]
+    except IndexError:
+        requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text':"Sorry %s! I don't know what went wrong!" % data['name']})
+        return
+    updater = HCSSUpdater('1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs')
+    updater.update_score(data['name'], value, data['created_at'])
+    requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text':"Okay %s! I added that to the sheeeeet!" % data['name']})
+
+
+def echo_command(data):
+    requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text':" ".join(data['text'].split()[1:])})
+
+commands = {
+    '/report': report_command,
+    '/echo': echo_command
+}
+
+
+def process_request(data):
+    commands.get((data['text'].split() or [None])[0], lambda x: None)(data)
+
 
 @app.route('/')
 def hello():
@@ -39,10 +66,11 @@ def groupme():
 
     if request.method == 'POST':
         json = request.get_json()
-        logging.critical(request.get_json())
+        logging.critical(json)
         groupme_data.append(json)
         with app.app_context():
             current_app.groupme_data = groupme_data
+        process_request({'text': json['text'], 'name': json['name'], 'created_at': json['created_at']})
 
     logging.critical('<--GROUPME')
     return "<br><br>".join(str(d) for d in groupme_data)
