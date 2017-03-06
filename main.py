@@ -7,6 +7,7 @@ from hcssupdater import HCSSUpdater
 
 app = Flask(__name__)
 
+TEST_BOT_ID = '33284e04361b09285e04b5beb1'
 BOT_ID = "9f0b7f63622e7968c464b7ff8d"
 BOT_URL = 'https://api.groupme.com/v3/bots/post'
 SHEET_ID = '1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs'
@@ -31,7 +32,12 @@ def echo_command(data):
 def quote_command(data):
     r = requests.get('http://quotes.rest/qod.json?category=inspire')
     data = r.json()
-    requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text': '"%s" -%s' % (data['quote'], data['author'])})
+    try:
+        quote = data['contents']['quotes'][0]
+        requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text': '"%s" -%s' % (quote['quote'], quote['author'])})
+    except (TypeError, IndexError, KeyError):
+        logging.exception('quote_commend ran into an error')
+
 
 commands = {
     '/report': report_command,
