@@ -56,12 +56,13 @@ class HCSSUpdater(object):
             return row_idx, row
 
     def get_names(self):
-        range_name = '%s!B1:1' % self.sheet_name
+        range_name = '%s!B2:2' % self.sheet_name
         result = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range=range_name).execute()
         values = result.get('values', [])
         return values[0]
 
     def update_score(self, name, value, timestamp):
+        value = 3 - int(value)  # number of points lost
         date = self.timestamp_to_date(timestamp)
         # print('date', date)
 
