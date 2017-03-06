@@ -7,7 +7,7 @@ from hcssupdater import HCSSUpdater
 
 app = Flask(__name__)
 
-BOT_ID = "33284e04361b09285e04b5beb1"
+BOT_ID = "9f0b7f63622e7968c464b7ff8d"
 BOT_URL = 'https://api.groupme.com/v3/bots/post'
 SHEET_ID = '1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs'
 
@@ -16,11 +16,11 @@ def report_command(data):
     try:
         value = data['text'].split()[1]
     except IndexError:
-        requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text':"Sorry %s! I don't know what went wrong!" % data['name']})
+        requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text':"Sorry %s! I don't know what went wrong!" % (data['name'].split() or ['you'])[0]})
         return
     updater = HCSSUpdater(SHEET_ID)
     updater.update_score(data['name'], value, data['created_at'])
-    requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text': "Okay %s! I added %s to the sheeeeet!" % (data['name'], value)})
+    requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text': "Okay %s! I added %s to the sheeeeet!" % ((data['name'].split() or ['you'])[0], value)})
 
 
 def echo_command(data):
