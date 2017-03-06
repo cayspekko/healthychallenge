@@ -31,13 +31,15 @@ class HCSSUpdater(object):
         return chr(idx + ord('A'))
 
     def timestamp_to_date(self, timestamp):
-        d = datetime.utcfromtimestamp(int(timestamp)).replace(hour=0, minute=0, second=0, microsecond=0)
+        d = datetime.utcfromtimestamp(int(timestamp))
         d = d + timedelta(hours=-7)  # subtract MST
+        d = d.replace(hour=0, minute=0, second=0, microsecond=0)
         return d
 
     def row_from_date(self, date, cols):
-        end_col = self.idxtocol(cols)
-        range_name = '%s!A2:%s' % (self.sheet_name, end_col)
+        end_col = self.idxtocol(cols - 1)
+        # print('end_col is', end_col)
+        range_name = '%s!A3:%s' % (self.sheet_name, end_col)
         result = self.service.spreadsheets().values().get(
             spreadsheetId=self.spreadsheet_id, range=range_name).execute()
         values = result.get('values', [])
@@ -46,10 +48,10 @@ class HCSSUpdater(object):
         # print('date values', values)
         if values:
             if date == end_date:
-                row_idx = len(values) + 1
+                row_idx = len(values) + 2
                 row = values[-1]
             else:
-                row_idx = len(values) + 2
+                row_idx = len(values) + 3
                 row = [date.strftime('%m/%d/%y')]
             row.extend(['' for _ in range(cols - len(row))])
             # print('row is ', row_idx, row)
@@ -69,8 +71,9 @@ class HCSSUpdater(object):
         names = self.get_names()
         # print('names', names)
 
-        end_col = len(names) + 1
-        row_idx, row = self.row_from_date(date, end_col)
+        col = len(names) + 1
+        end_col = self.idxtocol(col - 1)
+        row_idx, row = self.row_from_date(date, col)
         name_idx = names.index(name) + 1
         row[name_idx] = value
         # print('updatedRow', row)

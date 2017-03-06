@@ -18,8 +18,9 @@ SHEET_LINK = 'https://goo.gl/HTWJLj'
 def report_command(data):
     try:
         value = data['text'].split()[1]
-    except IndexError:
-        requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text':"Sorry %s! I don't know what went wrong!" % (data['name'].split() or ['you'])[0]})
+    except (TypeError, IndexError, KeyError):
+        logging.exception("error in report_command")
+        requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text': "Sorry %s! That didn't work and I don't know what went wrong!" % (data['name'].split() or ['you'])[0]})
         return
     updater = HCSSUpdater(SHEET_ID, sheet_name='Points')
     updater.update_score(data['name'], value, data['created_at'])
@@ -27,7 +28,7 @@ def report_command(data):
 
 
 def echo_command(data):
-    requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text':" ".join(data['text'].split()[1:])})
+    requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text': " ".join(data['text'].split()[1:])})
 
 
 def quote_command(data):
