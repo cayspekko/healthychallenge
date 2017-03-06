@@ -88,13 +88,21 @@ class HCSSUpdater(object):
                                                              valueInputOption="USER_ENTERED", body=body).execute()
         # print('result', result)
 
+    def stats(self):
+        range_name = '%s!I3:M4' %self.sheet_name
+        result = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range=range_name).execute()
+        values = result.get('values', [])
+        # print('stats', values)
+        return values
 
 def test_main():
-    spreadsheetid = '1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs'
-    ssupdator = HCSSUpdater(spreadsheetid)
-    ssupdator.update_score('Doug Applegate', str(3), str(int(time.time())))
-    ssupdator.update_score('Derek Haderlie', str(3), str(int(time.time())))
-    ssupdator.update_score('Chad Ruger', str(3), str(int(time.time())))
+    # spreadsheetid = '1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs'
+    spreadsheetid = '15-w7N4Qqw5MnpRmnd7bm2cyqbgWR-JPOT-wnmpMnvNs'
+    ssupdator = HCSSUpdater(spreadsheetid, sheet_name='Points')
+    # ssupdator.update_score('Doug Applegate', str(3), str(int(time.time())))
+    # ssupdator.update_score('Derek Haderlie', str(3), str(int(time.time())))
+    # ssupdator.update_score('Chad Ruger', str(3), str(int(time.time())))
+    ssupdator.stats()
 
 
 if __name__ == '__main__':

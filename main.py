@@ -41,10 +41,20 @@ def quote_command(data):
         logging.exception('quote_commend ran into an error')
 
 
+def stats_command(data):
+    updater = HCSSUpdater(SHEET_ID, sheet_name='Points')
+    stats = updater.stats()
+    response = []
+    for i in range(len(stats[0])):
+        response.append("%s: %s" % (stats[0][i], stats[1][i]))
+    requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text': ", ".join(response)})
+
+
 commands = {
     '/report': report_command,
     '/echo': echo_command,
-    '/quote': quote_command
+    '/quote': quote_command,
+    '/stats': stats_command
 }
 
 
