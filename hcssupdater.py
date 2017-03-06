@@ -2,7 +2,7 @@ import httplib2
 import time
 
 from apiclient import discovery
-from datetime import datetime
+from datetime import datetime, timedelta
 from oauth2client.service_account import ServiceAccountCredentials
 
 SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
@@ -31,7 +31,9 @@ class HCSSUpdater(object):
         return chr(idx + ord('A'))
 
     def timestamp_to_date(self, timestamp):
-        return datetime.fromtimestamp(int(timestamp)).replace(hour=0, minute=0, second=0, microsecond=0)
+        d = datetime.utcfromtimestamp(int(timestamp)).replace(hour=0, minute=0, second=0, microsecond=0)
+        d = d + timedelta(hours=-7)  # subtract MST
+        return d
 
     def row_from_date(self, date, cols):
         end_col = self.idxtocol(cols)

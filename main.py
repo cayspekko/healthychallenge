@@ -10,6 +10,7 @@ app = Flask(__name__)
 BOT_ID = "9f0b7f63622e7968c464b7ff8d"
 BOT_URL = 'https://api.groupme.com/v3/bots/post'
 SHEET_ID = '1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs'
+SHEET_LINK = 'https://goo.gl/v4CN3L'
 
 
 def report_command(data):
@@ -20,15 +21,22 @@ def report_command(data):
         return
     updater = HCSSUpdater(SHEET_ID)
     updater.update_score(data['name'], value, data['created_at'])
-    requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text': "Okay %s! I added %s to the sheeeeet!" % ((data['name'].split() or ['you'])[0], value)})
+    requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text': "Okay %s! I added %s to the spreadsheet! %s" % ((data['name'].split() or ['you'])[0], value, SHEET_LINK)})
 
 
 def echo_command(data):
     requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text':" ".join(data['text'].split()[1:])})
 
+
+def quote_command(data):
+    r = requests.get('http://quotes.rest/qod.json?category=inspire')
+    data = r.json()
+    requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text': '"%s" -%s' % (data['quote'], data['author'])})
+
 commands = {
     '/report': report_command,
-    '/echo': echo_command
+    '/echo': echo_command,
+    '/quote': quote_command
 }
 
 
