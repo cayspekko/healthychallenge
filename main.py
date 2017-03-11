@@ -45,9 +45,9 @@ def echo_command(data):
 
 def quote_command(data):
     r = requests.get('http://quotes.rest/qod.json?category=inspire')
-    data = r.json()
+    quote_data = r.json()
     try:
-        quote = data['contents']['quotes'][0]
+        quote = quote_data['contents']['quotes'][0]
         bot_speak(data['group_id'], '"%s" -%s' % (quote['quote'], quote['author']))
     except (TypeError, IndexError, KeyError):
         logging.exception('quote_commend ran into an error')
