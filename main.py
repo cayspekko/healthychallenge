@@ -87,6 +87,7 @@ def process_request(data):
 @app.route('/')
 def hello():
     """Return a friendly HTTP greeting."""
+    logging.critical('Hello everyone!')
     return 'Hello everyone!'
 
 
