@@ -9,16 +9,14 @@ app = Flask(__name__)
 app.config['DEBUG'] = True
 logging.critical('-->APP START')
 
-TEST_BOT_ID = '33284e04361b09285e04b5beb1'
-BOT_ID = '33284e04361b09285e04b5beb1'
-#BOT_ID = "9f0b7f63622e7968c464b7ff8d"
 BOT_URL = 'https://api.groupme.com/v3/bots/post'
 TEST_SHEET_ID = '1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs'
 SHEET_ID = '15-w7N4Qqw5MnpRmnd7bm2cyqbgWR-JPOT-wnmpMnvNs'
 SHEET_LINK = 'https://goo.gl/HTWJLj'
 
 BOTS = {
-    '28874652': '33284e04361b09285e04b5beb1'
+    '28874652': '33284e04361b09285e04b5beb1',  # Test room
+    '27099638': '9f0b7f63622e7968c464b7ff8d'  # Main room
 }
 
 
