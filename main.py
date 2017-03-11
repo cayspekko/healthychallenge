@@ -59,6 +59,7 @@ def stats_command(data):
     response = []
     for i in range(len(stats[0])):
         response.append("%s: %s" % (stats[0][i], stats[1][i]))
+    logging.critical('stats', ", ".join(response))
     bot_speak(data['group_id'], ", ".join(response))
 
 
