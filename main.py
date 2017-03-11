@@ -55,11 +55,13 @@ def quote_command(data):
 
 def stats_command(data):
     updater = HCSSUpdater(SHEET_ID, sheet_name='Points')
+    logging.critical('Read updater %s' % bool(updater))
     stats = updater.stats()
+    logging.critical('stats %s' % stats)
     response = []
     for i in range(len(stats[0])):
         response.append("%s: %s" % (stats[0][i], stats[1][i]))
-    logging.critical('stats', ", ".join(response))
+
     bot_speak(data['group_id'], ", ".join(response))
 
 
@@ -87,9 +89,12 @@ short_commands = {
 
 
 def process_request(data):
-    command = (data['text'].split() or [None])[0]
-    command = short_commands.get(command, command)
-    commands.get(command, (lambda x: None,))[0](data)
+    try:
+        command = (data['text'].split() or [None])[0]
+        command = short_commands.get(command, command)
+        commands.get(command, (lambda x: None,))[0](data)
+    except Exception as e:
+        logging.exception("Command %s failed" % command)
 
 
 @app.route('/')
