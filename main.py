@@ -48,7 +48,7 @@ def quote_command(data):
     data = r.json()
     try:
         quote = data['contents']['quotes'][0]
-        bot_speak('"%s" -%s' % (quote['quote'], quote['author']))
+        bot_speak(data['group_id'], '"%s" -%s' % (quote['quote'], quote['author']))
     except (TypeError, IndexError, KeyError):
         logging.exception('quote_commend ran into an error')
 
