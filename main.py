@@ -7,12 +7,14 @@ logger.setLevel(logging.DEBUG)
 handler = logging.handlers.SysLogHandler(address='/dev/log')
 logger.addHandler(handler)
 logger.critical('>>>Start flask app>>>')
+
 from flask import Flask, request, redirect
 import requests
 
 from hcssupdater import HCSSUpdater
 
 app = Flask(__name__)
+app.config['DEBUG'] = True
 
 TEST_BOT_ID = '33284e04361b09285e04b5beb1'
 BOT_ID = '33284e04361b09285e04b5beb1'
