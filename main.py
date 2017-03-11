@@ -7,8 +7,7 @@ from hcssupdater import HCSSUpdater
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
-app.logger.critical('>>>START FLASK APP')
-logging.critical('-->other logger')
+logging.critical('-->APP START')
 
 TEST_BOT_ID = '33284e04361b09285e04b5beb1'
 BOT_ID = '33284e04361b09285e04b5beb1'
@@ -18,25 +17,30 @@ TEST_SHEET_ID = '1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs'
 SHEET_ID = '15-w7N4Qqw5MnpRmnd7bm2cyqbgWR-JPOT-wnmpMnvNs'
 SHEET_LINK = 'https://goo.gl/HTWJLj'
 
+BOTS = {
+    '28874652': '33284e04361b09285e04b5beb1'
+}
 
-def bot_speak(text):
-    requests.post(BOT_URL, data={'bot_id': BOT_ID, 'text': text})
+
+def bot_speak(group_id, text):
+    if BOTS.get(group_id):
+        requests.post(BOT_URL, data={'bot_id': BOTS[group_id], 'text': text})
 
 
 def report_command(data):
     try:
         value = data['text'].split()[1]
     except (TypeError, IndexError, KeyError):
-        app.logger.exception("error in report_command")
-        bot_speak("Sorry %s! That didn't work and I don't know what went wrong!" % (data['name'].split() or ['you'])[0])
+        logging.exception("error in report_command")
+        bot_speak(data['group_id'], "Sorry %s! That didn't work and I don't know what went wrong!" % (data['name'].split() or ['you'])[0])
         return
     updater = HCSSUpdater(SHEET_ID, sheet_name='Points')
     updater.update_score(data['name'], value, data['created_at'])
-    bot_speak("Okay %s! I added %s to the spreadsheet!" % ((data['name'].split() or ['you'])[0], value))
+    bot_speak(data['group_id'], "Okay %s! I added %s to the spreadsheet!" % ((data['name'].split() or ['you'])[0], value))
 
 
 def echo_command(data):
-    bot_speak(" ".join(data['text'].split()[1:]))
+    bot_speak(data['group_id'], " ".join(data['text'].split()[1:]))
 
 
 def quote_command(data):
@@ -46,7 +50,7 @@ def quote_command(data):
         quote = data['contents']['quotes'][0]
         bot_speak('"%s" -%s' % (quote['quote'], quote['author']))
     except (TypeError, IndexError, KeyError):
-        app.logger.exception('quote_commend ran into an error')
+        logging.exception('quote_commend ran into an error')
 
 
 def stats_command(data):
@@ -55,17 +59,17 @@ def stats_command(data):
     response = []
     for i in range(len(stats[0])):
         response.append("%s: %s" % (stats[0][i], stats[1][i]))
-    bot_speak(", ".join(response))
+    bot_speak(data['group_id'], ", ".join(response))
 
 
 def sheet_command(data):
-    bot_speak(BOT_URL)
+    bot_speak(data['group_id'], BOT_URL)
 
 
 def help_command(data):
     help = ['Here are the commands: ']
     help.extend("{}{} {}".format(k, " ".join(v[1:-1]), v[-1]) for k, v in commands.items())
-    bot_speak("\n".join(help))
+    bot_speak(data['group_id'], "\n".join(help))
 
 commands = {
     '/report': (report_command, '[number]', 'also /r [number]. Report [number] to the spreadsheet.'),
@@ -84,13 +88,13 @@ short_commands = {
 def process_request(data):
     command = (data['text'].split() or [None])[0]
     command = short_commands.get(command, command)
-    commands.get(command, lambda x: None)(data)
+    commands.get(command, (lambda x: None,))[0](data)
 
 
 @app.route('/')
 def hello():
     """Return a friendly HTTP greeting."""
-    app.logger.critical('Hello everyone!')
+    logging.critical('Hello everyone!')
     return 'Hello everyone!'
 
 
@@ -98,8 +102,9 @@ def hello():
 def groupme():
     if request.method == 'POST':
         json = request.get_json()
-        app.logger.critical('DATA: %s' % json)
-        process_request({'text': json['text'], 'name': json['name'], 'created_at': json['created_at']})
+        logging.critical('DATA: %s' % json)
+        if json.get('sender_type') == 'user':  # ignore non-humans
+            process_request({'text': json['text'], 'name': json['name'], 'created_at': json['created_at'], 'group_id': json['group_id']})
         return ''
     else:
         return redirect('https://docs.google.com/spreadsheets/d/1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs', code=302)
