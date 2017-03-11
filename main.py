@@ -1,6 +1,5 @@
 # [START app]
-
-import logger
+import logging
 import requests
 
 from flask import Flask, request, redirect
@@ -9,7 +8,7 @@ from hcssupdater import HCSSUpdater
 app = Flask(__name__)
 app.config['DEBUG'] = True
 app.logger.critical('>>>START FLASK APP')
-logger.critical('-->other logger')
+logging.critical('-->other logger')
 
 TEST_BOT_ID = '33284e04361b09285e04b5beb1'
 BOT_ID = '33284e04361b09285e04b5beb1'
