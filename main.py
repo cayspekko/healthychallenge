@@ -1,12 +1,5 @@
 # [START app]
-import logging
-import logging.handlers
 
-logger = logging.getLogger('Flask')
-logger.setLevel(logging.DEBUG)
-handler = logging.handlers.SysLogHandler(address='/dev/log')
-logger.addHandler(handler)
-logger.critical('>>>Start flask app>>>')
 
 from flask import Flask, request, redirect
 import requests
@@ -15,7 +8,8 @@ from hcssupdater import HCSSUpdater
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
-app.logger.critical('>>>app logger')
+app.logger.critical('>>>START FLASK APP')
+logger.critical('-->other logger')
 
 TEST_BOT_ID = '33284e04361b09285e04b5beb1'
 BOT_ID = '33284e04361b09285e04b5beb1'
@@ -34,7 +28,7 @@ def report_command(data):
     try:
         value = data['text'].split()[1]
     except (TypeError, IndexError, KeyError):
-        logger.exception("error in report_command")
+        app.logger.exception("error in report_command")
         bot_speak("Sorry %s! That didn't work and I don't know what went wrong!" % (data['name'].split() or ['you'])[0])
         return
     updater = HCSSUpdater(SHEET_ID, sheet_name='Points')
@@ -53,7 +47,7 @@ def quote_command(data):
         quote = data['contents']['quotes'][0]
         bot_speak('"%s" -%s' % (quote['quote'], quote['author']))
     except (TypeError, IndexError, KeyError):
-        logger.exception('quote_commend ran into an error')
+        app.logger.exception('quote_commend ran into an error')
 
 
 def stats_command(data):
@@ -97,7 +91,7 @@ def process_request(data):
 @app.route('/')
 def hello():
     """Return a friendly HTTP greeting."""
-    logger.critical('Hello everyone!')
+    app.logger.critical('Hello everyone!')
     return 'Hello everyone!'
 
 
@@ -105,7 +99,7 @@ def hello():
 def groupme():
     if request.method == 'POST':
         json = request.get_json()
-        logger.critical('DATA: %s' % json)
+        app.logger.critical('DATA: %s' % json)
         process_request({'text': json['text'], 'name': json['name'], 'created_at': json['created_at']})
         return ''
     else:
