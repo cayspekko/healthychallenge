@@ -15,6 +15,7 @@ from hcssupdater import HCSSUpdater
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
+app.logger.critical('>>>app logger')
 
 TEST_BOT_ID = '33284e04361b09285e04b5beb1'
 BOT_ID = '33284e04361b09285e04b5beb1'
