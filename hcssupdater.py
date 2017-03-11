@@ -32,7 +32,7 @@ class HCSSUpdater(object):
 
     def timestamp_to_date(self, timestamp):
         d = datetime.utcfromtimestamp(int(timestamp))
-        d = d + timedelta(hours=-7)  # subtract MST
+        d = d + timedelta(hours=-9)  # subtract MST
         d = d.replace(hour=0, minute=0, second=0, microsecond=0)
         return d
 
