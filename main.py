@@ -1,5 +1,12 @@
 # [START app]
 import logging
+import logging.handlers
+
+logger = logging.getLogger('Flask')
+logger.setLevel(logging.DEBUG)
+handler = logging.handlers.SysLogHandler(address='/dev/log')
+logger.addHandler(handler)
+logger.critical('>>>Start flask app>>>')
 from flask import Flask, request, redirect
 import requests
 
@@ -24,7 +31,7 @@ def report_command(data):
     try:
         value = data['text'].split()[1]
     except (TypeError, IndexError, KeyError):
-        logging.exception("error in report_command")
+        logger.exception("error in report_command")
         bot_speak("Sorry %s! That didn't work and I don't know what went wrong!" % (data['name'].split() or ['you'])[0])
         return
     updater = HCSSUpdater(SHEET_ID, sheet_name='Points')
@@ -43,7 +50,7 @@ def quote_command(data):
         quote = data['contents']['quotes'][0]
         bot_speak('"%s" -%s' % (quote['quote'], quote['author']))
     except (TypeError, IndexError, KeyError):
-        logging.exception('quote_commend ran into an error')
+        logger.exception('quote_commend ran into an error')
 
 
 def stats_command(data):
@@ -87,7 +94,7 @@ def process_request(data):
 @app.route('/')
 def hello():
     """Return a friendly HTTP greeting."""
-    logging.critical('Hello everyone!')
+    logger.critical('Hello everyone!')
     return 'Hello everyone!'
 
 
@@ -95,7 +102,7 @@ def hello():
 def groupme():
     if request.method == 'POST':
         json = request.get_json()
-        logging.critical('DATA: %s' % json)
+        logger.critical('DATA: %s' % json)
         process_request({'text': json['text'], 'name': json['name'], 'created_at': json['created_at']})
         return ''
     else:
