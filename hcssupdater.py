@@ -92,7 +92,7 @@ class HCSSUpdater(object):
         range_name = '%s!I3:M4' %self.sheet_name
         result = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range=range_name).execute()
         values = result.get('values', [])
-        # print('stats', values)
+        print('stats', values)
         return values
 
 def test_main():
