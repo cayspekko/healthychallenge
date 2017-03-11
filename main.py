@@ -69,7 +69,7 @@ def sheet_command(data):
 
 def help_command(data):
     help = ['Here are the commands: ']
-    help.extend("{}{} {}".format(k, " ".join(v[1:-1]), v[-1]) for k, v in commands.items())
+    help.extend("{}\t{} {}".format(k, " ".join(v[1:-1]), v[-1]) for k, v in commands.items())
     bot_speak(data['group_id'], "\n".join(help))
 
 commands = {
