@@ -1,9 +1,9 @@
 # [START app]
 
-
-from flask import Flask, request, redirect
+import logger
 import requests
 
+from flask import Flask, request, redirect
 from hcssupdater import HCSSUpdater
 
 app = Flask(__name__)
