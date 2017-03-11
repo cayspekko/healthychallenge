@@ -17,7 +17,7 @@ class HCSSUpdater(object):
         self.credentials = self.get_credentials()
         http = self.credentials.authorize(httplib2.Http())
         discovery_url = 'https://sheets.googleapis.com/$discovery/rest?version=v4'
-        self.service = discovery.build('sheets', 'v4', http=http, discoveryServiceUrl=discovery_url)
+        self.service = discovery.build('sheets', 'v4', http=http, discoveryServiceUrl=discovery_url, cache_discovery=False)
 
     def get_credentials(self):
         scopes = [SCOPES]
