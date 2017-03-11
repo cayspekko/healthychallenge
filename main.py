@@ -64,7 +64,7 @@ def stats_command(data):
 
 
 def sheet_command(data):
-    bot_speak(data['group_id'], BOT_URL)
+    bot_speak(data['group_id'], SHEET_LINK)
 
 
 def help_command(data):
