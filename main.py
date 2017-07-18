@@ -111,7 +111,7 @@ def groupme():
             process_request({'text': json['text'], 'name': json['name'], 'created_at': json['created_at'], 'group_id': json['group_id']})
         return ''
     else:
-        return redirect('https://docs.google.com/spreadsheets/d/1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs', code=302)
+        return redirect(SHEET_LINK, code=302)
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080)
