@@ -11,6 +11,8 @@ APPLICATION_NAME = 'Healthy Challenge Updater'
 
 
 class HCSSUpdater(object):
+    MAX_DAILY = 2
+
     def __init__(self, spreadsheet_id, sheet_name="Sheet1"):
         self.spreadsheet_id = spreadsheet_id
         self.sheet_name = sheet_name
@@ -64,7 +66,7 @@ class HCSSUpdater(object):
         return values[0]
 
     def update_score(self, name, value, timestamp):
-        value = 3 - int(value)  # number of points lost
+        value = self.MAX_DAILY - int(value)  # number of points lost
         date = self.timestamp_to_date(timestamp)
         # print('date', date)
 
