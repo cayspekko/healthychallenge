@@ -4,6 +4,7 @@ import requests
 
 from flask import Flask, request, redirect
 from hcssupdater import HCSSUpdater
+from private_data import PrivateData
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -14,10 +15,8 @@ TEST_SHEET_ID = '1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs'
 SHEET_ID = '15-w7N4Qqw5MnpRmnd7bm2cyqbgWR-JPOT-wnmpMnvNs'
 SHEET_LINK = 'https://goo.gl/HTWJLj'
 
-BOTS = {
-    '28874652': '33284e04361b09285e04b5beb1',  # Test room
-    '27099638': '9f0b7f63622e7968c464b7ff8d'  # Main room
-}
+BOTS = PrivateData('bots')
+logging.critical('-->loading bot info from file: %s' % BOTS)
 
 
 def bot_speak(group_id, text):
