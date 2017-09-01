@@ -39,8 +39,11 @@ def report_command(data):
 def echo_command(data):
     bot_speak(data['group_id'], " ".join(data['text'].split()[1:]))
 
-
 def quote_command(data):
+    r = requests.get('http://inspirobot.me/api?generate=true')
+    bot_speak(data['group_id'], r.text)
+
+def real_quote_command(data):
     r = requests.get('http://quotes.rest/qod.json?category=inspire')
     quote_data = r.json()
     try:
