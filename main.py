@@ -81,7 +81,7 @@ def baxter_command(data):
     try:
         question = " ".join(data['text'].split()[1:])
         r = requests.get('https://8ball.delegator.com/magic/JSON/' + question).json()
-        bot_speak(data['group_id'], r['answer'])
+        bot_speak(data['group_id'], r['magic']['answer'])
     except Exception as e:
         logging.exception(e)
         bot_speak(data['group_id'], "I don't think I understand.")
