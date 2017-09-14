@@ -82,7 +82,8 @@ def baxter_command(data):
         question = " ".join(data['text'].split()[1:])
         r = requests.get('https://8ball.delegator.com/magic/JSON/' + question).json()
         bot_speak(data['group_id'], r['answer'])
-    except Exception:
+    except Exception as e:
+        logging.exception(e)
         bot_speak(data['group_id'], "I don't think I understand.")
 
 
@@ -93,11 +94,12 @@ commands = {
     '/stats': (stats_command, 'Gets the current report stats'),
     '/sheet': (sheet_command, 'Prints the url of the spreadsheet'),
     '/help': (help_command, 'Prints this help command'),
-    'baxter': (baxter_command, '[yes/no question]', 'Get a prediction from Baxter')
+    'baxter,': (baxter_command, '[yes/no question]', 'Get a prediction from Baxter')
 }
 
 short_commands = {
-    '/r': '/report'
+    '/r': '/report',
+    'baxter': 'baxter,'
 }
 
 
