@@ -39,9 +39,11 @@ def report_command(data):
 def echo_command(data):
     bot_speak(data['group_id'], " ".join(data['text'].split()[1:]))
 
+
 def quote_command(data):
     r = requests.get('http://inspirobot.me/api?generate=true')
     bot_speak(data['group_id'], r.text)
+
 
 def real_quote_command(data):
     r = requests.get('http://quotes.rest/qod.json?category=inspire')
@@ -74,13 +76,24 @@ def help_command(data):
     help.extend("{}\t{} {}".format(k, " ".join(v[1:-1]), v[-1]) for k, v in commands.items())
     bot_speak(data['group_id'], "\n".join(help))
 
+
+def baxter_command(data):
+    try:
+        question = " ".join(data['text'].split()[1:])
+        r = requests.get('https://8ball.delegator.com/magic/JSON/' + question).json()
+        bot_speak(data['group_id'], r['answer'])
+    except Exception:
+        bot_speak(data['group_id'], "I don't think I understand.")
+
+
 commands = {
     '/report': (report_command, '[number]', 'also /r [number]. Report [number] to the spreadsheet.'),
     '/echo': (echo_command, '[text]', 'Repeats [text].'),
     '/quote': (quote_command, 'Gets the quote of the day courtesy theysaidso.com'),
     '/stats': (stats_command, 'Gets the current report stats'),
     '/sheet': (sheet_command, 'Prints the url of the spreadsheet'),
-    '/help': (help_command, 'Prints this help command')
+    '/help': (help_command, 'Prints this help command'),
+    'baxter': (baxter_command, '[yes/no question]', 'Get a prediction from Baxter')
 }
 
 short_commands = {
@@ -89,8 +102,9 @@ short_commands = {
 
 
 def process_request(data):
+    command = None
     try:
-        command = (data['text'].split() or [None])[0]
+        command = (data['text'].lower().split() or [None])[0]
         command = short_commands.get(command, command)
         commands.get(command, (lambda x: None,))[0](data)
     except Exception as e:
@@ -114,6 +128,7 @@ def groupme():
         return ''
     else:
         return redirect(SHEET_LINK, code=302)
+
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080)
