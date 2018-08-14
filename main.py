@@ -12,8 +12,10 @@ logging.critical('-->APP START')
 
 BOT_URL = 'https://api.groupme.com/v3/bots/post'
 TEST_SHEET_ID = '1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs'
-SHEET_ID = '15-w7N4Qqw5MnpRmnd7bm2cyqbgWR-JPOT-wnmpMnvNs'
-SHEET_LINK = 'https://goo.gl/HTWJLj'
+# SHEET_ID = '15-w7N4Qqw5MnpRmnd7bm2cyqbgWR-JPOT-wnmpMnvNs'
+# SHEET_LINK = 'https://goo.gl/HTWJLj'
+SHEET_ID = '1DkIHMqWsinFXEcEtt3paelcXjAripjG6VyjrLIlp_JA'
+SHEET_LINK = 'https://docs.google.com/spreadsheets/d/1DkIHMqWsinFXEcEtt3paelcXjAripjG6VyjrLIlp_JA/edit?usp=sharing'
 
 BOTS = PrivateData('bots')
 logging.critical('-->loading bot info from file: %s' % BOTS)
