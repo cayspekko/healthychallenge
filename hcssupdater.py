@@ -11,7 +11,7 @@ APPLICATION_NAME = 'Healthy Challenge Updater'
 
 
 class HCSSUpdater(object):
-    MAX_DAILY = 2
+    MAX_DAILY = 3
 
     def __init__(self, spreadsheet_id, sheet_name="Sheet1"):
         self.spreadsheet_id = spreadsheet_id
