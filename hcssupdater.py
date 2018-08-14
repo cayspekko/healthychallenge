@@ -91,7 +91,7 @@ class HCSSUpdater(object):
         # print('result', result)
 
     def stats(self):
-        range_name = '%s!I3:M4' %self.sheet_name
+        range_name = '%s!L3:S4' %self.sheet_name
         result = self.service.spreadsheets().values().get(spreadsheetId=self.spreadsheet_id, range=range_name).execute()
         values = result.get('values', [])
         print('stats', values)
