@@ -17,6 +17,8 @@ TEST_SHEET_ID = '1U-wAQAXaDFYZ2uQvPtxL5kSDOss8kMPRRpyb6OgRbKs'
 SHEET_ID = '1DkIHMqWsinFXEcEtt3paelcXjAripjG6VyjrLIlp_JA'
 SHEET_LINK = 'https://docs.google.com/spreadsheets/d/1DkIHMqWsinFXEcEtt3paelcXjAripjG6VyjrLIlp_JA/edit?usp=sharing'
 
+RULES_LINK = "https://azure.applegate.us/a/static/rules.png"
+
 BOTS = PrivateData('bots')
 logging.critical('-->loading bot info from file: %s' % BOTS)
 
@@ -80,6 +82,10 @@ def help_command(data):
     bot_speak(data['group_id'], "\n".join(help))
 
 
+def rules_command(data):
+    bot_speak(data['group_id'], RULES_LINK)
+
+
 def baxter_command(data):
     try:
         question = " ".join(data['text'].split()[1:])
@@ -97,6 +103,7 @@ commands = {
     '/stats': (stats_command, 'Gets the current report stats'),
     '/sheet': (sheet_command, 'Prints the url of the spreadsheet'),
     '/help': (help_command, 'Prints this help command'),
+    '/rules': (rules_command, 'Show challenge rules'),
     'baxter,': (baxter_command, '[yes/no question]', 'Get a prediction from Baxter')
 }
 
