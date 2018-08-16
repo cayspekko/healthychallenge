@@ -34,7 +34,8 @@ def report_command(data):
         bot_speak(data['group_id'], "Sorry %s! That didn't work and I don't know what went wrong!" % (data['name'].split() or ['you'])[0])
         return
     updater = HCSSUpdater(SHEET_ID, sheet_name='Points')
-    updater.update_score(data['name'], value, data['created_at'])
+    name = " ".join(data['name'].split())  # removes extra spaces
+    updater.update_score(name, value, data['created_at'])
     bot_speak(data['group_id'], "Okay %s! I added %s to the spreadsheet!" % ((data['name'].split() or ['you'])[0], value))
 
 
